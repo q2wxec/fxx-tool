@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.fxx.common.tools.es.config.EsAutoConfiguration
