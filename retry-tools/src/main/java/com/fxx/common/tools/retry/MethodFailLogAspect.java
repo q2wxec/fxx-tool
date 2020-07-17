@@ -1,5 +1,7 @@
 package com.fxx.common.tools.retry;
 
+import java.util.concurrent.Executor;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,8 +20,11 @@ public class MethodFailLogAspect {
 
     private MethodFailLogRecorder methodFailLogRecorder;
 
-    public MethodFailLogAspect(MethodFailLogRecorder methodFailLogRecorder) {
+    private Executor              executor;
+
+    public MethodFailLogAspect(MethodFailLogRecorder methodFailLogRecorder, Executor executor) {
         this.methodFailLogRecorder = methodFailLogRecorder;
+        this.executor = executor;
     }
 
     @Pointcut(value = "@annotation(com.fxx.common.tools.retry.MethodFailLog)")
@@ -55,7 +60,13 @@ public class MethodFailLogAspect {
         MethodFailInfo failInfo = new MethodFailInfo(target.getClass(), methodName, e, args);
         failInfo.setMethodTag(methodTag);
         failInfo.setMethodUnique(methodUnique);
-        methodFailLogRecorder.recordMethodFailLog(failInfo);
+        if (executor != null) {
+            executor.execute(() -> {
+                methodFailLogRecorder.recordMethodFailLog(failInfo);
+            });
+        } else {
+            methodFailLogRecorder.recordMethodFailLog(failInfo);
+        }
     }
 
 }

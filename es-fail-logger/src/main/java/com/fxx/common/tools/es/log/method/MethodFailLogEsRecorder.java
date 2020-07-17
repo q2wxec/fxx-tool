@@ -1,7 +1,6 @@
 package com.fxx.common.tools.es.log.method;
 
 import java.util.Date;
-import java.util.concurrent.Executor;
 
 import com.fxx.common.tools.es.CommonEsClient;
 import com.fxx.common.tools.retry.MethodFailInfo;
@@ -22,12 +21,10 @@ public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
 
     private CommonEsClient commonEsClient;
     private String         applicationName;
-    private Executor       executor;
 
-    public MethodFailLogEsRecorder(CommonEsClient commonEsClient, String applicationName, Executor executor) {
+    public MethodFailLogEsRecorder(CommonEsClient commonEsClient, String applicationName) {
         this.commonEsClient = commonEsClient;
         this.applicationName = applicationName;
-        this.executor = executor;
     }
 
     /**
@@ -37,7 +34,6 @@ public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
      */
     @Override
     public void recordMethodFailLog(MethodFailInfo methodFailInfo) {
-        executor.execute(() -> {
             MethodFailLogDO methodFailLogDO = new MethodFailLogDO();
             Throwable exception = methodFailInfo.getException();
             BeanUtils.copyProperties(methodFailInfo, methodFailLogDO);
@@ -54,6 +50,5 @@ public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
             } catch (Exception e) {
                 log.error("保存方法失败日志异常，失败日志详细信息为：" + JsonUtils.toJSONString(methodFailLogDO), e);
             }
-        });
     }
 }

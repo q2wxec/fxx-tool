@@ -3,6 +3,7 @@ package com.fxx.common.tools.mq;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import com.fxx.common.tools.exception.ToolAssert;
 import com.fxx.common.tools.status.CompensateTypeEnum;
@@ -27,11 +28,14 @@ public class MqProducerWrapper {
 
     private Map<String, Object>      mqServerParams;
 
+    private Executor                 executor;
+
     public MqProducerWrapper(MqTemplateInter mqTemplate, MqFailEventRecorderInter mqFailEventRecorderInter,
-                             Map<String, Object> mqServerParams) {
+                             Map<String, Object> mqServerParams, Executor executor) {
         this.mqTemplate = mqTemplate;
         this.mqFailEventRecorderInter = mqFailEventRecorderInter;
         this.mqServerParams = mqServerParams;
+        this.executor = executor;
     }
 
     public static final Integer QUEUE_MSG_TYPE = 1;
@@ -283,7 +287,13 @@ public class MqProducerWrapper {
         if (mqServerParams == null) {
             mqServerParams = CollUtils.newHashMap();
         }
-        mqFailEventRecorderInter.publishMqFailEvent(this, mqSendFaillogInfo, mqServerParams);
+        if (executor != null) {
+            executor.execute(() -> {
+                mqFailEventRecorderInter.publishMqFailEvent(this, mqSendFaillogInfo, mqServerParams);
+            });
+        } else {
+            mqFailEventRecorderInter.publishMqFailEvent(this, mqSendFaillogInfo, mqServerParams);
+        }
     }
 
 
