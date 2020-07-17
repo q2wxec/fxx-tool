@@ -25,5 +25,10 @@
             <artifactId>mq-tools</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fxx</groupId>
+            <artifactId>retry-tools</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

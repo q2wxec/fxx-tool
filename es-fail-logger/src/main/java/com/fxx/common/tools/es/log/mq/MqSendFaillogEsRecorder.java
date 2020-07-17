@@ -29,6 +29,7 @@ public class MqSendFaillogEsRecorder implements MqFailEventRecorderInter {
         this.applicationName = applicationName;
     }
 
+    //todo 异步化
     @Override
     public void publishMqFailEvent(Object source, MqSendFaillogInfo mqSendFaillogInfo,
                                    Map<String, Object> mqServerParams) {

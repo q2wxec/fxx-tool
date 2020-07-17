@@ -24,6 +24,7 @@
         <basic-tools.version>1.0-SNAPSHOT</basic-tools.version>
         <es-tools.version>1.0-SNAPSHOT</es-tools.version>
         <mq-tools.version>1.0-SNAPSHOT</mq-tools.version>
+        <retry-tools.version>1.0-SNAPSHOT</retry-tools.version>
         <spring-boot.version>2.0.3.RELEASE</spring-boot.version>
         <jackson.version>2.9.6</jackson.version>
         <aspectj.version>1.8.6</aspectj.version>
@@ -42,6 +43,12 @@
                 <groupId>com.fxx</groupId>
                 <artifactId>mq-tools</artifactId>
                 <version>${mq-tools.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fxx</groupId>
+                <artifactId>retry-tools</artifactId>
+                <version>${retry-tools.version}</version>
             </dependency>
 
             <dependency>

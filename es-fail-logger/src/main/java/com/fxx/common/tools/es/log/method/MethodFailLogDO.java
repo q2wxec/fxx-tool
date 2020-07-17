@@ -1,4 +1,4 @@
-package com.fxx.common.tools.es.log.feign;
+package com.fxx.common.tools.es.log.method;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,51 +21,35 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@BaseEsModal(index = "feign_failinfo")
-public class RemoteScRequestFaillogDO implements Serializable {
+@BaseEsModal(index = "method_fail_info")
+public class MethodFailLogDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @EsModalId
     private String            id;
 
-    /**
-     * 发起方应用名
-     */
     private String            applicationName;
 
     /**
-     * SC应用名
+     * 调用目标type
      */
-    private String            requestServer;
-    /**
-     * 调用客户端client
-     */
-    private String            requestClient;
+    private String            targetClass;
     /**
      * 调用方法method
      */
-    private String            requestMethod;
-    /**
-     * 调用方法method
-     */
-    private String            requestType;
-    /**
-     * 调用Path
-     */
-    private String            requestPath;
+    private String            methodName;
+
     /**
      * 调用参数
      */
-    private String            requestParams;
+    private String            methodParams;
+
     /**
      * 调用时间
      */
     private Date              requestTime;
-    /**
-     * 响应消息
-     */
-    private String            returnMsg;
+
     /**
      * 异常信息
      */
@@ -78,10 +62,6 @@ public class RemoteScRequestFaillogDO implements Serializable {
      * 补偿状态(1-未补偿，2-补偿成功，3-补偿失败)
      */
     private Integer           compensateStatus;
-    /**
-     * 失败类型(1-超时，2-服务异常，3-调用失败,4-权限限制)
-     */
-    private Integer           failType;
 
     /**
      * 补偿类型(1-需要补偿，2-不需要补偿)
