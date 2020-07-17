@@ -3,6 +3,7 @@ package com.fxx.common.tools.es.log.mq;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import com.fxx.common.tools.es.CommonEsClient;
 import com.fxx.common.tools.mq.MqFailEventRecorderInter;
@@ -23,30 +24,33 @@ public class MqSendFaillogEsRecorder implements MqFailEventRecorderInter {
 
     private CommonEsClient commonEsClient;
     private String applicationName;
+    private Executor       executor;
 
-    public MqSendFaillogEsRecorder(CommonEsClient commonEsClient, String applicationName) {
+    public MqSendFaillogEsRecorder(CommonEsClient commonEsClient, String applicationName, Executor executor) {
         this.commonEsClient = commonEsClient;
         this.applicationName = applicationName;
+        this.executor = executor;
     }
 
-    //todo 异步化
     @Override
     public void publishMqFailEvent(Object source, MqSendFaillogInfo mqSendFaillogInfo,
                                    Map<String, Object> mqServerParams) {
-        MqSendFaillogDO mqSendFaillogDO = new MqSendFaillogDO();
-        Exception exception = mqSendFaillogInfo.getException();
-        BeanUtils.copyProperties(mqSendFaillogInfo, mqSendFaillogDO);
-        mqSendFaillogDO.setSendTime(new Date());
-        mqSendFaillogDO.setCompensateStatus(CompensateStatusEnum.NOT.getCode());
-        mqSendFaillogDO.setApplicationName(applicationName);
-        if(exception != null){
-            mqSendFaillogDO.setExceptionInfo(exception.toString());
-            mqSendFaillogDO.setStackInfo(ExceptionUtils.stacktraceToString(exception));
-        }
-        try {
-            commonEsClient.add(mqSendFaillogDO);
-        }catch (Exception e){
-            log.error("保存mq消息发送失败日志异常，失败日志详细信息为："+ JsonUtils.toJSONString(mqSendFaillogDO),e);
-        }
+        executor.execute(() -> {
+            MqSendFaillogDO mqSendFaillogDO = new MqSendFaillogDO();
+            Exception exception = mqSendFaillogInfo.getException();
+            BeanUtils.copyProperties(mqSendFaillogInfo, mqSendFaillogDO);
+            mqSendFaillogDO.setSendTime(new Date());
+            mqSendFaillogDO.setCompensateStatus(CompensateStatusEnum.NOT.getCode());
+            mqSendFaillogDO.setApplicationName(applicationName);
+            if (exception != null) {
+                mqSendFaillogDO.setExceptionInfo(exception.toString());
+                mqSendFaillogDO.setStackInfo(ExceptionUtils.stacktraceToString(exception));
+            }
+            try {
+                commonEsClient.add(mqSendFaillogDO);
+            } catch (Exception e) {
+                log.error("保存mq消息发送失败日志异常，失败日志详细信息为：" + JsonUtils.toJSONString(mqSendFaillogDO), e);
+            }
+        });
     }
 }

@@ -1,6 +1,7 @@
 package com.fxx.common.tools.es.log.method;
 
 import java.util.Date;
+import java.util.concurrent.Executor;
 
 import com.fxx.common.tools.es.CommonEsClient;
 import com.fxx.common.tools.retry.MethodFailInfo;
@@ -21,10 +22,12 @@ public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
 
     private CommonEsClient commonEsClient;
     private String         applicationName;
+    private Executor       executor;
 
-    public MethodFailLogEsRecorder(CommonEsClient commonEsClient, String applicationName) {
+    public MethodFailLogEsRecorder(CommonEsClient commonEsClient, String applicationName, Executor executor) {
         this.commonEsClient = commonEsClient;
         this.applicationName = applicationName;
+        this.executor = executor;
     }
 
     /**
@@ -32,24 +35,25 @@ public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
      *
      * @param methodFailInfo
      */
-    //todo 异步化
     @Override
     public void recordMethodFailLog(MethodFailInfo methodFailInfo) {
-        MethodFailLogDO methodFailLogDO = new MethodFailLogDO();
-        Throwable exception = methodFailInfo.getException();
-        BeanUtils.copyProperties(methodFailInfo, methodFailLogDO);
-        methodFailLogDO.setTargetClass(methodFailInfo.getTargetClass().getName());
-        methodFailLogDO.setCreatedTime(new Date());
-        methodFailLogDO.setCompensateStatus(CompensateStatusEnum.NOT.getCode());
-        methodFailLogDO.setApplicationName(applicationName);
-        if (exception != null) {
-            methodFailLogDO.setExceptionInfo(exception.toString());
-            methodFailLogDO.setStackInfo(ExceptionUtils.stacktraceToString(exception));
-        }
-        try {
-            commonEsClient.add(methodFailLogDO);
-        } catch (Exception e) {
-            log.error("保存方法失败日志异常，失败日志详细信息为：" + JsonUtils.toJSONString(methodFailLogDO), e);
-        }
+        executor.execute(() -> {
+            MethodFailLogDO methodFailLogDO = new MethodFailLogDO();
+            Throwable exception = methodFailInfo.getException();
+            BeanUtils.copyProperties(methodFailInfo, methodFailLogDO);
+            methodFailLogDO.setTargetClass(methodFailInfo.getTargetClass().getName());
+            methodFailLogDO.setCreatedTime(new Date());
+            methodFailLogDO.setCompensateStatus(CompensateStatusEnum.NOT.getCode());
+            methodFailLogDO.setApplicationName(applicationName);
+            if (exception != null) {
+                methodFailLogDO.setExceptionInfo(exception.toString());
+                methodFailLogDO.setStackInfo(ExceptionUtils.stacktraceToString(exception));
+            }
+            try {
+                commonEsClient.add(methodFailLogDO);
+            } catch (Exception e) {
+                log.error("保存方法失败日志异常，失败日志详细信息为：" + JsonUtils.toJSONString(methodFailLogDO), e);
+            }
+        });
     }
 }
