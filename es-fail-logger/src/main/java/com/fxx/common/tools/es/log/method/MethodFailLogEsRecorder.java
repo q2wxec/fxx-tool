@@ -2,7 +2,7 @@ package com.fxx.common.tools.es.log.method;
 
 import java.util.Date;
 
-import com.fxx.common.tools.es.CommonEsClient;
+import com.fxx.common.tools.es.CommonEsClientInter;
 import com.fxx.common.tools.retry.MethodFailInfo;
 import com.fxx.common.tools.retry.MethodFailLogRecorder;
 import com.fxx.common.tools.status.CompensateStatusEnum;
@@ -19,10 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MethodFailLogEsRecorder implements MethodFailLogRecorder {
 
-    private CommonEsClient commonEsClient;
+    private CommonEsClientInter commonEsClient;
     private String         applicationName;
 
-    public MethodFailLogEsRecorder(CommonEsClient commonEsClient, String applicationName) {
+    public MethodFailLogEsRecorder(CommonEsClientInter commonEsClient, String applicationName) {
         this.commonEsClient = commonEsClient;
         this.applicationName = applicationName;
     }

@@ -4,7 +4,7 @@ package com.fxx.common.tools.es.log.mq;
 import java.util.Date;
 import java.util.Map;
 
-import com.fxx.common.tools.es.CommonEsClient;
+import com.fxx.common.tools.es.CommonEsClientInter;
 import com.fxx.common.tools.mq.MqFailEventRecorderInter;
 import com.fxx.common.tools.mq.MqSendFaillogInfo;
 import com.fxx.common.tools.status.CompensateStatusEnum;
@@ -21,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MqSendFaillogEsRecorder implements MqFailEventRecorderInter {
 
-    private CommonEsClient commonEsClient;
+    private CommonEsClientInter commonEsClient;
     private String applicationName;
 
-    public MqSendFaillogEsRecorder(CommonEsClient commonEsClient, String applicationName) {
+    public MqSendFaillogEsRecorder(CommonEsClientInter commonEsClient, String applicationName) {
         this.commonEsClient = commonEsClient;
         this.applicationName = applicationName;
     }
