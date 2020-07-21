@@ -1,14 +1,6 @@
 package com.fxx.common.web.filter;
 
 
-import com.fxx.common.tools.utils.StrUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +10,15 @@ import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import com.fxx.common.tools.utils.StrUtils;
 
 /**
  * XSS过滤处理
@@ -32,7 +33,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
     /**
      * html过滤
      */
-    private final static HTMLFilter htmlFilter = new HTMLFilter();
+    private final static HTMLFilter HTML_FILTER     = new HTMLFilter();
 
     public XssHttpServletRequestWrapper(HttpServletRequest request) {
         super(request);
@@ -124,7 +125,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     private String xssEncode(String input) {
-        return htmlFilter.filter(input);
+        return HTML_FILTER.filter(input);
     }
 
     /**
