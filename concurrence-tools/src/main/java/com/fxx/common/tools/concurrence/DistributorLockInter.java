@@ -5,9 +5,9 @@ package com.fxx.common.tools.concurrence;
  * @author wangxiao1
  * @date 2020/7/16
  */
-public interface DistributLockInter {
+public interface DistributorLockInter {
 
-    Object getDistributLock(String key, long timeoutSeconds);
+    Object getDistributorLock(String key, long timeoutSeconds);
 
     void releaseLock(String key, String value);
 }
