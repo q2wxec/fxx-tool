@@ -31,7 +31,7 @@ public class DistributedLockAspect {
 
     private ExpressionParser                          parser                 = new SpelExpressionParser();
     private LocalVariableTableParameterNameDiscoverer discoverer             = new LocalVariableTableParameterNameDiscoverer();
-    private static final String                       DISTRIBUTED_LOCK_PRFIX = "DISTRIBUTED_LOCK_PRFIX:";
+    private static final String                       DISTRIBUTED_LOCK_PRFIX = "DISTRIBUTED_LOCK_PREFIX:";
 
     private DistributorLockInter                      distributorLock;
 
