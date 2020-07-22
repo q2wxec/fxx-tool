@@ -576,8 +576,8 @@ public class CommonEsClient implements CommonEsClientInter {
         BaseEsModal baseEsModal = (BaseEsModal) entityClass.getAnnotation(BaseEsModal.class);
         //有该类型的注解存在
         ToolAssert.notNull(baseEsModal, "class:{" + entityClass.getName() + "},非BaseEsModal注解对象，无法使用通用EsClient");
-        EsBaseProperties esBaseProperties = new EsBaseProperties();
-        BeanUtils.copyProperties(baseEsModal, esBaseProperties);
+        String s = JsonUtils.toJSONString(baseEsModal);
+        EsBaseProperties esBaseProperties = JsonUtils.toJavaObject(s, EsBaseProperties.class);
         esBaseProperties.setIndexPrfix(indexPrfix);
         return esBaseProperties;
     }
