@@ -26,6 +26,10 @@ public class NoRepeatSubmitAspect {
 
     private DistributorLockInter distributorLock;
 
+    public NoRepeatSubmitAspect(DistributorLockInter distributorLock) {
+        this.distributorLock = distributorLock;
+    }
+
     @Pointcut("@annotation(noRepeatSubmit)")
     public void pointCut(NoRepeatSubmit noRepeatSubmit) {
     }
